@@ -1,9 +1,8 @@
 import Link from "next/link"
 
 const links = [
-  {name: "About", href: "#about"},
   {name: "Work", href: "#work"},
-  {name: "Services", href: "#services"},
+  {name: "Services", href: "#about"},
   {name: "Contact", href: "#contact"},
   {name: "Privacy", href: "#privacy"},  
   {name: "Terms", href: "#terms"},
