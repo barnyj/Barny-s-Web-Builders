@@ -23,7 +23,7 @@ export default function WearYourStory() {
             transition={{ duration: 0.8, delay: 0.2 }}
           >
             <a
-              href="work"
+              href="#work"
               target="_blank"
               rel="noopener noreferrer"
               className="apple-button inline-flex items-center"

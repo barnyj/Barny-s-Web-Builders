@@ -30,7 +30,7 @@ export default function Hero() {
             transition={{ duration: 0.8, delay: 0.4 }}
           >
             <a
-              href="work"
+              href="#work"
               target="_blank"
               rel="noopener noreferrer"
               className="apple-button"
@@ -38,7 +38,7 @@ export default function Hero() {
               Explore Our Work
             </a>
             <a
-              href="about"
+              href="#about"
               target="_blank"
               rel="noopener noreferrer"
               className="text-sm font-semibold leading-6 text-foreground"

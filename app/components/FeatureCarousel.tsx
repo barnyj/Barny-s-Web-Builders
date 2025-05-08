@@ -78,7 +78,7 @@ export default function FeatureCarousel() {
                 </div>
                 <div className="mt-4">
                   <a
-                    href="https://www.flowersandsaints.com.au"
+                    href=""
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-primary hover:underline"
