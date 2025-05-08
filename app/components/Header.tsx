@@ -25,7 +25,7 @@ export default function Header() {
             <span className="sr-only">Barny's Web Builders</span>
             <img
               className="h-8 w-auto"
-              src="/BWB-Logo.png"
+              src="/BWB-logo.png"
               alt="Barny's Web Builders logo"
             />
           </Link>
