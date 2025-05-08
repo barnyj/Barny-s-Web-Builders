@@ -22,23 +22,6 @@ export default function WearYourStory() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            <a
-              href="#work"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="apple-button inline-flex items-center"
-            >
-              Explore Our Work
-              <svg
-                className="w-5 h-5 ml-2"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-              </svg>
-            </a>
           </motion.div>
         </motion.div>
       </div>
