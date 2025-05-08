@@ -7,10 +7,11 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY!)
 export async function POST(request: NextRequest) {
   try {
     const { name, email, message } = await request.json();
+    const senderEmail = process.env.SENDER_EMAIL;
 
     // 1. Build the mail payload
     const msg = {
-        to: SENDER_EMAIL,           // your inbox or a distribution list
+        to: senderEmail,           // your inbox or a distribution list
         from: process.env.SENDER_EMAIL!, // verified sender
         subject: `New Contact from ${name}`,
         text: `
