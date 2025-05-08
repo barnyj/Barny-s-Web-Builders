@@ -17,7 +17,7 @@ export default function Footer() {
           {links.map((link) => (
             <div key={link.name} className="pb-6">
               <Link
-                href="{link.href}"
+                href= {link.href}
                 className="text-sm leading-6 text-muted-foreground hover:text-foreground"
               >
                 {link.name}
