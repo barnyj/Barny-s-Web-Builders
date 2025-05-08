@@ -25,7 +25,7 @@ export default function Header() {
             <span className="sr-only">Barny's Web Builders</span>
             <img
               className="h-8 w-auto"
-              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/creative-SW6QDQbcVuwPgb6a2CYtYmRbsJa4k1.png"
+              src="../../public/BWB-Logo.png"
               alt="Barny's Web Builders logo"
             />
           </Link>
