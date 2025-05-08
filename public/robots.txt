@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://barnyswebbuilders.site/sitemap.xml
