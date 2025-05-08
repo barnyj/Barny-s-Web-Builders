@@ -8,7 +8,7 @@ const projects = [
   {
     id: 1,
     title: "Minimalist Brand Identity",
-    description: "Clean and modern visual communication for a tech startup",
+    description: "Clean and modern visual communication for a coffee brand",
     imageUrl: "/eclipse-coffee-mockup1.png",
     category: "Branding",
     href: "/case-studies/eclipse-coffee",
@@ -17,7 +17,7 @@ const projects = [
   {
     id: 2,
     title: "Sleek Web Experience",
-    description: "Elegant online presence for a luxury fashion brand",
+    description: "Elegant online presence for architecture portfolio",
     imageUrl: "/arcframe-logo.png",
     category: "Web Design",
     href: "/case-studies/arcframe",
