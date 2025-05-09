@@ -5,16 +5,14 @@ import sgMail from "@sendgrid/mail"
 sgMail.setApiKey(process.env.SENDGRID_API_KEY!)
 
 export async function POST(request: NextRequest) {
-  console.log("🔔 /api/contact route hit");
+  const { name, email, message } = await request.json();
+  const senderEmail = process.env.SENDER_EMAIL!;
+  const receiverEmail = process.env.RECEIVER_EMAIL!; // your inbox
 
   try {
-    const { name, email, message } = await request.json();
-    const senderEmail = process.env.SENDER_EMAIL!;
-
-    console.log("📬 Contact payload:", { name, email, message, senderEmail });
     // 1. Build the mail payload
     const msg = {
-        to: senderEmail,           // your inbox or a distribution list
+        to: receiverEmail,           // your inbox or a distribution list
         from: senderEmail, // verified sender
         subject: `New Contact from ${name}`,
         text: `
