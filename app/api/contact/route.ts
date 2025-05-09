@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
       await sgMail.send(msg)
       console.log("✅ SendGrid send OK");
     return NextResponse.json({ success: true }, { status: 200 });
-  } catch (err) {
+  } catch (err:any) {
     console.error("❌ SendGrid error:", err);
     if (err.response?.body) {
       console.error("❌ SendGrid response body:", err.response.body);
