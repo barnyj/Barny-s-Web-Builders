@@ -38,6 +38,7 @@ export async function POST(request: NextRequest) {
       await db.collection("leads").insertOne({
         name,
         email,
+        phoneNumber,
         message,
         receivedAt: new Date(),
       });
