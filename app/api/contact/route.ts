@@ -7,18 +7,18 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY!)
 export async function POST(request: NextRequest) {
   try {
     const { name, email, message } = await request.json();
-    const senderEmail = process.env.SENDER_EMAIL;
+    const senderEmail = process.env.SENDER_EMAIL!;
 
+    console.log("📬 Contact payload:", { name, email, message, senderEmail });
     // 1. Build the mail payload
     const msg = {
         to: senderEmail,           // your inbox or a distribution list
-        from: process.env.SENDER_EMAIL!, // verified sender
+        from: senderEmail, // verified sender
         subject: `New Contact from ${name}`,
         text: `
           Name: ${name}
           Email: ${email}
-          Message:
-          ${message}
+          Message:${message}
         `,
         html: `<p><strong>Name:</strong> ${name}</p>
                <p><strong>Email:</strong> ${email}</p>
@@ -27,10 +27,16 @@ export async function POST(request: NextRequest) {
   
       // 2. Send it
       await sgMail.send(msg)
-
+      console.log("✅ SendGrid send OK");
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (err) {
-    console.error(err);
-    return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+    console.error("❌ SendGrid error:", err);
+    if (err.response?.body) {
+      console.error("❌ SendGrid response body:", err.response.body);
+    }
+    return NextResponse.json(
+      { error: err.message || "Unknown error" },
+      { status: 500 }
+    );
   }
 }
