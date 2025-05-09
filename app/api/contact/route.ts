@@ -6,11 +6,13 @@ import { connectToDatabase } from "./db";
 sgMail.setApiKey(process.env.SENDGRID_API_KEY!)
 
 export async function POST(request: NextRequest) {
-  const { name, email, message, phoneNumber } = await request.json();
-  const senderEmail = process.env.SENDER_EMAIL!;
-  const receiverEmail = process.env.RECEIVER_EMAIL!; // your inbox
-
+  console.log("🔔 /api/contact route hit");
+  
   try {
+    const { name, email, message, phoneNumber } = await request.json();
+    const senderEmail = process.env.SENDER_EMAIL!;
+    const receiverEmail = process.env.RECEIVER_EMAIL!; // your inbox
+
     // 1. Build the mail payload
     const msg = {
         to: receiverEmail, // your inbox or a distribution list
