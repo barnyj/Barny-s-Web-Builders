@@ -32,15 +32,29 @@ export default function ContactForm() {
     },
   })
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true)
-    // Simulate API call
-    setTimeout(() => {
-      console.log(values)
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values),
+      })
+      const data = await res.json()
+  
+      if (!res.ok) {
+        console.error("🚨 API error:", data.error)
+        alert("Oops! Something went wrong. Please try again.")
+      } else {
+        form.reset()
+        alert("Thank you for your message. We'll get back to you soon!")
+      }
+    } catch (error) {
+      console.error("🚨 Fetch failed:", error)
+      alert("Network error. Please try again.")
+    } finally {
       setIsSubmitting(false)
-      form.reset()
-      alert("Thank you for your message. We'll get back to you soon!")
-    }, 2000)
+    }
   }
 
   return (
