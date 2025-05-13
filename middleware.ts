@@ -1,29 +1,33 @@
 // middleware.ts
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server"
+import type { NextRequest } from "next/server"
 
 export function middleware(request: NextRequest) {
-  const { hostname } = request.nextUrl;
-  // Cloudflare/Render terminate TLS in front, so we trust x-forwarded-proto
-  const proto = request.headers.get("x-forwarded-proto") || "";
+  const host  = request.nextUrl.hostname
+  const proto = request.headers.get("x-forwarded-proto") || ""
 
-  // 1) Skip middleware in local dev
-  if (hostname === "localhost" || hostname === "127.0.0.1") {
-    return NextResponse.next();
+  // Skip in local dev
+  if (host === "localhost" || host === "127.0.0.1") {
+    const res = NextResponse.next()
+    res.headers.set("x-middleware-debug", "local")
+    return res
   }
 
-  // 2) If not HTTPS (via header) or not on the www host, redirect
-  const wantsHttps = proto === "https";
-  const wantsWww   = hostname === "www.barnyswebbuilders.site";
+  const wantsHttps = proto === "https"
+  const wantsWww   = host === "www.barnyswebbuilders.site"
+
   if (!wantsHttps || !wantsWww) {
-    const url = request.nextUrl.clone();
-    url.protocol = "https:";
-    url.host     = "www.barnyswebbuilders.site";
-    return NextResponse.redirect(url, 301);
+    const url = request.nextUrl.clone()
+    url.protocol = "https:"
+    url.host     = "www.barnyswebbuilders.site"
+    const res = NextResponse.redirect(url, 301)
+    res.headers.set("x-middleware-debug", "redirected")
+    return res
   }
 
-  // 3) Otherwise, continue
-  return NextResponse.next();
+  const res = NextResponse.next()
+  res.headers.set("x-middleware-debug", "passed")
+  return res
 }
 
-export const config = { matcher: "/:path*" };
+export const config = { matcher: "/:path*" }
