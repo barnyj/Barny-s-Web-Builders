@@ -8,26 +8,24 @@ export function middleware(request: NextRequest) {
 
   // Skip in local dev
   if (host === "localhost" || host === "127.0.0.1") {
-    const res = NextResponse.next()
-    res.headers.set("x-middleware-debug", "local")
-    return res
+    console.log("[middleware] skipping redirect (local)")
+    return NextResponse.next()
   }
 
   const wantsHttps = proto === "https"
   const wantsWww   = host === "www.barnyswebbuilders.site"
 
   if (!wantsHttps || !wantsWww) {
+    console.log(
+      `[middleware] redirecting to https://www.barnyswebbuilders.site${request.nextUrl.pathname}`)
     const url = request.nextUrl.clone()
     url.protocol = "https:"
     url.host     = "www.barnyswebbuilders.site"
-    const res = NextResponse.redirect(url, 301)
-    res.headers.set("x-middleware-debug", "redirected")
-    return res
+    return NextResponse.redirect(url, 301)
   }
 
-  const res = NextResponse.next()
-  res.headers.set("x-middleware-debug", "passed")
-  return res
+  console.log("[middleware] passed, serving page")
+  return NextResponse.next()
 }
 
 export const config = { matcher: "/:path*" }
