@@ -2,33 +2,25 @@ import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 
 export function middleware(request: NextRequest) {
-  // Only skip in non-production (i.e. local/dev) runs
-  const isDev = process.env.NODE_ENV !== "production"
-  if (isDev) {
-    console.log("[middleware] skipping redirect (dev mode)")
+  // Only run in production
+  if (process.env.NODE_ENV !== "production") {
     return NextResponse.next()
   }
 
-  // In production, enforce HTTPS + www
-  const host  = request.nextUrl.hostname
+  const host = request.nextUrl.hostname
   const proto = request.headers.get("x-forwarded-proto") || ""
+  const isHttps = proto === "https"
+  const isWww   = host === "www.barnyswebbuilders.site"
 
-  console.log(`[middleware] host=${host} proto=${proto}`)
-
-  const wantsHttps = proto === "https"
-  const wantsWww   = host === "www.barnyswebbuilders.site"
-
-  if (!wantsHttps || !wantsWww) {
-    console.log(
-      `[middleware] redirecting to https://www.barnyswebbuilders.site${request.nextUrl.pathname}`
-    )
-    const url = request.nextUrl.clone()
-    url.protocol = "https:"
-    url.host     = "www.barnyswebbuilders.site"
-    return NextResponse.redirect(url, 301)
+  // If not HTTPS or not www, redirect in one hop
+  if (!isHttps || !isWww) {
+    // preserve path & query
+    const pathAndQuery = request.nextUrl.pathname + request.nextUrl.search
+    const destination = `https://www.barnyswebbuilders.site${pathAndQuery}`
+    return NextResponse.redirect(destination, 301)
   }
 
-  console.log("[middleware] passed, serving page")
+  // Otherwise serve the page
   return NextResponse.next()
 }
 
