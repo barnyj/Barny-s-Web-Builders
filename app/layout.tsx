@@ -5,7 +5,6 @@ import { ThemeProvider } from "@/components/theme-provider"
 import Header from "./components/Header"
 import Footer from "./components/Footer"
 import Script from "next/script"
-import { JsonLdSchemas } from "./components/JsonLdSchemas"
 import type React from "react"
 
 const inter = Inter({ subsets: ["latin"] })
@@ -17,22 +16,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      {/* 1) Load the GA4 library */}
-      <Script
-        src="https://www.googletagmanager.com/gtag/js?id=G-ZVRNC71CW2"
-        strategy="afterInteractive"
-      />
-      {/* 2) Initialize gtag */}
-      <Script id="gtag-init" strategy="afterInteractive">
-        {`
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', 'G-ZVRNC71CW2', { page_path: window.location.pathname });
-        `}
-      </Script>
-
-      <JsonLdSchemas />
       <body className={`${inter.className} min-h-screen bg-background text-foreground`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <Header />
