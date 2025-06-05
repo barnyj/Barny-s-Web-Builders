@@ -179,14 +179,14 @@ export default function ElectricianLanding() {
               {
                 title: "Metro Electrical Services",
                 summary: "50% reduction in response time",
-                image: "/PowerTech-Sol.png",
+                image: "/Metro-Elec-Serv.png",
                 description:
                   "Real-time lead notifications helped Metro Electrical respond to customer inquiries 50% faster than before.",
               },
               {
                 title: "PowerTech Solutions",
                 summary: "40% increase in revenue",
-                image: "/Metro-Elec-Serv.png",
+                image: "/PowerTech-Sol.png",
                 description:
                   "Seamless payment integration and automated follow-ups resulted in a significant boost in overall revenue.",
               },
