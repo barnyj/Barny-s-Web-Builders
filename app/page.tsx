@@ -6,12 +6,14 @@ import Timeline from "./components/Timeline"
 import Marquee from "./components/Marquee"
 import ContactForm from "./components/ContactForm"
 import NewsletterSubscribe from "./components/NewsletterSubscribe"
+import OurDesignProcess from "./components/OurDesignProcess"
 
 export default function Home() {
   return (
     <>
       <Hero />
       <WearYourStory />
+      <OurDesignProcess />
       <FeatureCarousel />
       <PortfolioGrid />
       <Timeline />
