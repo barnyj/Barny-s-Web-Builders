@@ -46,8 +46,8 @@ Use the most recent knowledge available up to today’s date (June 5, 2025). Alw
       max_tokens: 600,
     });
 
-    // 6) Extract the assistant’s reply
-    const reply = completion.choices[0].message?.content.trim() || "";
+    // 6) Extract the assistant’s reply, guarding against null
+    const reply = completion.choices?.[0]?.message?.content?.trim() ?? "";
 
     // 7) Return JSON back to the client
     return NextResponse.json({ reply });
