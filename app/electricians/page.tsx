@@ -186,7 +186,7 @@ export default function ElectricianLanding() {
               {
                 title: "PowerTech Solutions",
                 summary: "40% increase in revenue",
-                image: "/PowerTech-Sol.png",
+                image: "/Powertech-Sol.png",
                 description:
                   "Seamless payment integration and automated follow-ups resulted in a significant boost in overall revenue.",
               },
