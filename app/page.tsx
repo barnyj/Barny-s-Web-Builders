@@ -7,6 +7,7 @@ import Marquee from "./components/Marquee"
 import ContactForm from "./components/ContactForm"
 import NewsletterSubscribe from "./components/NewsletterSubscribe"
 import OurDesignProcess from "./components/OurDesignProcess"
+import ChatWidget from "./components/ChatWidget"
 
 export default function Home() {
   return (
@@ -20,6 +21,7 @@ export default function Home() {
       <Marquee />
       <ContactForm />
       <NewsletterSubscribe />
+      <ChatWidget />
     </>
   )
 }
