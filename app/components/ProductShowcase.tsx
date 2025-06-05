@@ -37,7 +37,7 @@ export default function ProductShowcase() {
   }
 
   return (
-    <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50 overflow-hidden">
+    <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50 overflow-hidden h-screen">
       <div className="container mx-auto">
         <h2 className="section-title">Our Expertise</h2>
         <div className="relative">

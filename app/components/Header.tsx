@@ -50,7 +50,17 @@ export default function Header() {
             Contact
           </Link>
         </div>
-        <div className="flex flex-1 justify-end">
+        <div className="flex flex-1 justify-end items-center gap-x-4">
+          {/* “Book Now” button: same text-size as other links */}
+          <a
+            href="https://calendly.com/barnyswebbuilders/free-consultation"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm font-semibold leading-6 text-foreground hover:text-primary transition-colors"
+          >
+            Book Now
+          </a>
+          {/* Theme toggle button */}
           {mounted && (
             <button
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}

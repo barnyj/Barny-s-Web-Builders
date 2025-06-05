@@ -78,7 +78,7 @@ export default function OurDesignProcess() {
   return (
     <section
       id="process"
-      className="relative py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-secondary/20 to-background"
+      className="relative py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-secondary/20 to-background h-screen"
     >
       <div className="max-w-7xl mx-auto text-center">
         {/* Section Heading */}
