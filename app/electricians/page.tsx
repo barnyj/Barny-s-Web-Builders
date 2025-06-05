@@ -18,6 +18,7 @@ import {
   Twitter,
   Instagram,
 } from "lucide-react"
+import ChatWidget from "../components/ChatWidget"
 
 export default function ElectricianLanding() {
   return (
@@ -307,6 +308,7 @@ export default function ElectricianLanding() {
           </div>
         </div>
       </footer>
+      <ChatWidget />
     </div>
   )
 }
