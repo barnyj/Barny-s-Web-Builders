@@ -10,12 +10,13 @@ export default function ChatWidget() {
   const [currentInput, setCurrentInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement | null>(null);
 
-  // Auto-scroll when new messages arrive (only if open)
+  // Auto‐scroll when new messages arrive (only if open)
   useEffect(() => {
-    if (isOpen && scrollRef.current) {
-      scrollRef.current.scrollTo({
+    if (isOpen) {
+      // Optional chaining here avoids "Object is possibly 'null'"
+      scrollRef.current?.scrollTo({
         top: scrollRef.current.scrollHeight,
         behavior: "smooth",
       });
@@ -122,6 +123,7 @@ export default function ChatWidget() {
             </div>
           </div>
         ))}
+
         {isLoading && (
           <div className="flex justify-start">
             <div className="max-w-xs px-4 py-2 rounded-lg bg-card border border-border text-foreground animate-pulse">
