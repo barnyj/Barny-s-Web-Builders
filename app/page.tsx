@@ -19,7 +19,6 @@ export default function Home() {
       <PortfolioGrid />
       <Timeline />
       <Marquee />
-      <ContactForm />
       <NewsletterSubscribe />
       <ChatWidget />
     </>
