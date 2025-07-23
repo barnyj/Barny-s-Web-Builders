@@ -1,14 +1,17 @@
 "use client";
-import { useState } from "react";
+import React, { useState, ChangeEvent, FormEvent } from "react";
 
 export default function OnboardingPage() {
-  const [formData, setFormData] = useState({});
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  const [formData, setFormData] = useState<Record<string, string>>({});
+
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+  const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
     // TODO: handle form submission (e.g., send to backend or integration)
     console.log(formData);
     // Optionally redirect to Calendly after submit
