@@ -1,467 +1,716 @@
-"use client";
-import React, { useState, ChangeEvent, FormEvent } from "react";
+"use client"
+
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { motion } from "framer-motion"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import * as z from "zod"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Button } from "@/components/ui/button"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+
+const formSchema = z
+  .object({
+    // Business & Branding Information
+    businessName: z.string().min(2, { message: "Business name must be at least 2 characters." }),
+    targetAudience: z.string().min(10, { message: "Please describe your target audience in at least 10 characters." }),
+    brandColors: z.string().min(2, { message: "Please specify your brand colors." }),
+    brandVoice: z.string().min(2, { message: "Please describe your brand voice." }),
+    logoAssets: z.string().min(10, { message: "Please provide details about your logo and brand assets." }),
+    preferredFonts: z.string().min(2, { message: "Please specify your preferred fonts." }),
+    companyTagline: z.string().min(2, { message: "Please provide your company tagline." }),
+
+    // Website Goals & Features
+    websiteGoals: z.string().min(10, { message: "Please describe your website goals in at least 10 characters." }),
+    websitePages: z.string().min(2, { message: "Please list the pages you need." }),
+    inspiration: z.string().min(10, { message: "Please share your inspiration or reference sites." }),
+    mustHaveFeatures: z.string().min(2, { message: "Please list your must-have features." }),
+    ecommerceNeeds: z.enum(["Yes", "No"], { required_error: "Please select if you need eCommerce functionality." }),
+    productCount: z.string().optional(),
+
+    // Content & Assets
+    websiteContent: z.enum(["Yes", "No", "Partially"], {
+      required_error: "Please select your content readiness status.",
+    }),
+    contentAccess: z.string().min(2, { message: "Please provide content access details." }),
+    imagesMedia: z.string().min(10, { message: "Please describe your images and media needs." }),
+    copywriting: z.enum(["Yes", "No"], { required_error: "Please select if you need copywriting services." }),
+
+    // Domain & Technical Information
+    domainName: z.string().min(2, { message: "Please provide your domain name or preference." }),
+    domainAccess: z.enum(["Yes", "No"], { required_error: "Please select if you have domain access." }),
+    contactEmail: z.string().email({ message: "Please enter a valid email address." }),
+    analyticsTracking: z.enum(["Google Analytics", "Facebook Pixel", "None"], {
+      required_error: "Please select your analytics preference.",
+    }),
+
+    // Project Scope & Timeline
+    timeline: z.string().min(2, { message: "Please specify your desired timeline." }),
+    budget: z.string().min(2, { message: "Please provide your budget range." }),
+    additionalInfo: z.string().min(10, { message: "Please provide any additional information." }),
+
+    // Contact Information
+    fullName: z.string().min(2, { message: "Full name must be at least 2 characters." }),
+    companyName: z.string().min(2, { message: "Company name must be at least 2 characters." }),
+    emailAddress: z.string().email({ message: "Please enter a valid email address." }),
+    phoneNumber: z.string().min(10, { message: "Please enter a valid phone number." }),
+  })
+  .refine(
+    (data) => {
+      if (data.ecommerceNeeds === "Yes" && !data.productCount) {
+        return false
+      }
+      return true
+    },
+    {
+      message: "Please specify how many products you need for eCommerce.",
+      path: ["productCount"],
+    },
+  )
 
 export default function OnboardingPage() {
-  const [formData, setFormData] = useState<Record<string, string>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const router = useRouter()
 
-  const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-  ) => {
-  const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-  e.preventDefault();
-    // TODO: handle form submission (e.g., send to backend or integration)
-    console.log(formData);
-    // Optionally redirect to Calendly after submit
-    window.location.href = "https://calendly.com/barnyswebbuilders/project-kick-off-call";
-  };
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      businessName: "",
+      targetAudience: "",
+      brandColors: "",
+      brandVoice: "",
+      logoAssets: "",
+      preferredFonts: "",
+      companyTagline: "",
+      websiteGoals: "",
+      websitePages: "",
+      inspiration: "",
+      mustHaveFeatures: "",
+      ecommerceNeeds: undefined,
+      productCount: "",
+      websiteContent: undefined,
+      contentAccess: "",
+      imagesMedia: "",
+      copywriting: undefined,
+      domainName: "",
+      domainAccess: undefined,
+      contactEmail: "",
+      analyticsTracking: undefined,
+      timeline: "",
+      budget: "",
+      additionalInfo: "",
+      fullName: "",
+      companyName: "",
+      emailAddress: "",
+      phoneNumber: "",
+    },
+  })
+
+  const watchEcommerceNeeds = form.watch("ecommerceNeeds")
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsSubmitting(true)
+    try {
+      // Here you could send the form data to your API if needed
+      console.log("Form submitted:", values)
+
+      // Redirect to Calendly
+      router.push("https://calendly.com/barnyswebbuilders/project-kick-off-call")
+    } catch (error) {
+      console.error("Form submission error:", error)
+      alert("Something went wrong. Please try again.")
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  const sectionVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 },
+  }
 
   return (
-    <main className="min-h-screen bg-white py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-900 mb-6">
-          Client Project Onboarding Form
-        </h1>
-        <aside className="bg-gray-100 p-4 rounded-lg mb-8 italic text-gray-700">
-          👋 Welcome! Thanks for your interest in working with us. Please complete this form to help us understand your project needs.
-        </aside>
-        <form onSubmit={handleSubmit} className="space-y-12">
-          {/* Business & Branding Information */}
-          <section>
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-              🗂️ Business & Branding Information
-            </h2>
-            <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
-              <div>
-                <label htmlFor="businessName" className="block text-sm font-medium text-gray-700">
-                  🏢 Business Name
-                </label>
-                <input
-                  type="text"
-                  id="businessName"
-                  name="businessName"
-                  onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-primary focus:border-primary"
-                  placeholder="Your business name"
-                />
-              </div>
-              <div>
-                <label htmlFor="targetAudience" className="block text-sm font-medium text-gray-700">
-                  🎯 Target Audience
-                </label>
-                <textarea
-                  id="targetAudience"
-                  name="targetAudience"
-                  onChange={handleChange}
-                  rows={3}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-primary focus:border-primary"
-                  placeholder="Demographics, interests, pain points"
-                />
-              </div>
-              <div>
-                <label htmlFor="brandColors" className="block text-sm font-medium text-gray-700">
-                  🎨 Brand Colors
-                </label>
-                <input
-                  type="text"
-                  id="brandColors"
-                  name="brandColors"
-                  onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-primary focus:border-primary"
-                  placeholder="Hex codes or descriptions"
-                />
-              </div>
-              <div>
-                <label htmlFor="brandVoice" className="block text-sm font-medium text-gray-700">
-                  📝 Brand Voice
-                </label>
-                <input
-                  type="text"
-                  id="brandVoice"
-                  name="brandVoice"
-                  onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-primary focus:border-primary"
-                  placeholder="Professional, casual, etc."
-                />
-              </div>
-              <div className="sm:col-span-2">
-                <label htmlFor="brandAssets" className="block text-sm font-medium text-gray-700">
-                  🖼️ Logo & Brand Assets
-                </label>
-                <textarea
-                  id="brandAssets"
-                  name="brandAssets"
-                  onChange={handleChange}
-                  rows={2}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-primary focus:border-primary"
-                  placeholder="Describe existing assets"
-                />
-              </div>
-              <div>
-                <label htmlFor="preferredFonts" className="block text-sm font-medium text-gray-700">
-                  🔤 Preferred Fonts
-                </label>
-                <input
-                  type="text"
-                  id="preferredFonts"
-                  name="preferredFonts"
-                  onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-primary focus:border-primary"
-                  placeholder="Font names or styles"
-                />
-              </div>
-              <div>
-                <label htmlFor="companyTagline" className="block text-sm font-medium text-gray-700">
-                  💫 Company Tagline
-                </label>
-                <input
-                  type="text"
-                  id="companyTagline"
-                  name="companyTagline"
-                  onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-primary focus:border-primary"
-                  placeholder="Your slogan or tagline"
-                />
-              </div>
-            </div>
-          </section>
+    <div className="min-h-screen bg-background">
+      <div className="max-w-7xl mx-auto px-6 py-12">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-16"
+        >
+          <h1 className="text-4xl font-bold text-foreground sm:text-5xl mb-4">Client Project Onboarding Form</h1>
+          <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+            Help us understand your project requirements so we can create the perfect website for your business.
+          </p>
+        </motion.div>
 
-          {/* Website Goals & Features */}
-          <section>
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-              🧱 Website Goals & Features
-            </h2>
-            <div className="space-y-6">
-              <div>
-                <label htmlFor="websiteGoals" className="block text-sm font-medium text-gray-700">
-                  🎯 Website Goals
-                </label>
-                <textarea
-                  id="websiteGoals"
-                  name="websiteGoals"
-                  onChange={handleChange}
-                  rows={2}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-primary focus:border-primary"
-                  placeholder="e.g., generate leads, improve SEO"
-                />
-              </div>
-              <div>
-                <label htmlFor="websitePages" className="block text-sm font-medium text-gray-700">
-                  📄 Website Pages
-                </label>
-                <input
-                  type="text"
-                  id="websitePages"
-                  name="websitePages"
-                  onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-primary focus:border-primary"
-                  placeholder="Home, About, Services..."
-                />
-              </div>
-              <div>
-                <label htmlFor="inspiration" className="block text-sm font-medium text-gray-700">
-                  💡 Inspiration
-                </label>
-                <textarea
-                  id="inspiration"
-                  name="inspiration"
-                  onChange={handleChange}
-                  rows={2}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-primary focus:border-primary"
-                  placeholder="Paste URLs and notes"
-                />
-              </div>
-              <div>
-                <label htmlFor="mustHaveFeatures" className="block text-sm font-medium text-gray-700">
-                  ⚙️ Must-have Features
-                </label>
-                <input
-                  type="text"
-                  id="mustHaveFeatures"
-                  name="mustHaveFeatures"
-                  onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-primary focus:border-primary"
-                  placeholder="Booking calendar, contact forms..."
-                />
-              </div>
-              <div>
-                <label htmlFor="ecommerceNeeds" className="block text-sm font-medium text-gray-700">
-                  🛒 eCommerce Needs
-                </label>
-                <select
-                  id="ecommerceNeeds"
-                  name="ecommerceNeeds"
-                  onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-primary focus:border-primary"
-                >
-                  <option value="">Select an option</option>
-                  <option value="yes">Yes</option>
-                  <option value="no">No</option>
-                </select>
-                <input
-                  type="text"
-                  id="productCount"
-                  name="productCount"
-                  onChange={handleChange}
-                  className="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:ring-primary focus:border-primary"
-                  placeholder="If yes, how many products?"
-                />
-              </div>
-            </div>
-          </section>
-
-          {/* Content & Assets */}
-          <section>
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-              📝 Content & Assets
-            </h2>
-            <div className="space-y-6">
-              <div>
-                <label htmlFor="contentReady" className="block text-sm font-medium text-gray-700">
-                  📄 Website Content
-                </label>
-                <select
-                  id="contentReady"
-                  name="contentReady"
-                  onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-primary focus:border-primary"
-                >
-                  <option value="">Select status</option>
-                  <option value="yes">Yes</option>
-                  <option value="no">No</option>
-                  <option value="partial">Partially</option>
-                </select>
-              </div>
-              <div>
-                <label htmlFor="contentLinks" className="block text-sm font-medium text-gray-700">
-                  🔗 Content Access
-                </label>
-                <input
-                  type="text"
-                  id="contentLinks"
-                  name="contentLinks"
-                  onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-primary focus:border-primary"
-                  placeholder="Links to Docs, Dropbox, etc." />
-              </div>
-              <div>
-                <label htmlFor="mediaAssets" className="block text-sm font-medium text-gray-700">
-                  📸 Images & Media
-                </label>
-                <textarea
-                  id="mediaAssets"
-                  name="mediaAssets"
-                  onChange={handleChange}
-                  rows={2}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-primary focus:border-primary"
-                  placeholder="Describe photos or needs"
-                />
-              </div>
-              <div>
-                <label htmlFor="copywriting" className="block text-sm font-medium text-gray-700">
-                  ✍️ Copywriting
-                </label>
-                <select
-                  id="copywriting"
-                  name="copywriting"
-                  onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-primary focus:border-primary"
-                >
-                  <option value="">Select an option</option>
-                  <option value="yes">Yes, I need help</option>
-                  <option value="no">No, I have my own copy</option>
-                </select>
-              </div>
-            </div>
-          </section>
-
-          {/* Domain & Technical Information */}
-          <section>
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-              🌐 Domain & Technical Information
-            </h2>
-            <div className="space-y-6">
-              <div>
-                <label htmlFor="domainName" className="block text-sm font-medium text-gray-700">
-                  🔗 Domain Name
-                </label>
-                <input
-                  type="text"
-                  id="domainName"
-                  name="domainName"
-                  onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-primary focus:border-primary"
-                  placeholder="Your domain or idea"
-                />
-              </div>
-              <div>
-                <label htmlFor="domainAccess" className="block text-sm font-medium text-gray-700">
-                  🔐 Domain Access
-                </label>
-                <select
-                  id="domainAccess"
-                  name="domainAccess"
-                  onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-primary focus:border-primary"
-                >
-                  <option value="">Select access</option>
-                  <option value="yes">Yes, I have access</option>
-                  <option value="no">No</option>
-                </select>
-              </div>
-              <div>
-                <label htmlFor="contactEmail" className="block text-sm font-medium text-gray-700">
-                  📧 Contact Email
-                </label>
-                <input
-                  type="email"
-                  id="contactEmail"
-                  name="contactEmail"
-                  onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-primary focus:border-primary"
-                  placeholder="Email for form submissions"
-                />
-              </div>
-              <div>
-                <label htmlFor="analyticsTracking" className="block text-sm font-medium text-gray-700">
-                  📊 Analytics & Tracking
-                </label>
-                <select
-                  id="analyticsTracking"
-                  name="analyticsTracking"
-                  onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-primary focus:border-primary"
-                >
-                  <option value="">Select tools needed</option>
-                  <option value="google">Google Analytics</option>
-                  <option value="facebook">Facebook Pixel</option>
-                  <option value="none">None</option>
-                </select>
-              </div>
-            </div>
-          </section>
-
-          {/* Project Scope & Timeline */}
-          <section>
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-              ✅ Project Scope & Timeline
-            </h2>
-            <div className="space-y-6">
-              <div>
-                <label htmlFor="timeline" className="block text-sm font-medium text-gray-700">
-                  ⏱️ Timeline
-                </label>
-                <input
-                  type="text"
-                  id="timeline"
-                  name="timeline"
-                  onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-primary focus:border-primary"
-                  placeholder="2 weeks, 1 month, etc."
-                />
-              </div>
-              <div>
-                <label htmlFor="budget" className="block text-sm font-medium text-gray-700">
-                  💰 Budget
-                </label>
-                <input
-                  type="text"
-                  id="budget"
-                  name="budget"
-                  onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-primary focus:border-primary"
-                  placeholder="$X,XXX - $X,XXX"
-                />
-              </div>
-              <div>
-                <label htmlFor="additionalInfo" className="block text-sm font-medium text-gray-700">
-                  📝 Additional Information
-                </label>
-                <textarea
-                  id="additionalInfo"
-                  name="additionalInfo"
-                  onChange={handleChange}
-                  rows={3}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-primary focus:border-primary"
-                  placeholder="Any other notes or requests"
-                />
-              </div>
-            </div>
-          </section>
-
-          {/* Contact Information */}
-          <section>
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-              📞 Contact Information
-            </h2>
-            <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
-              <div>
-                <label htmlFor="fullName" className="block text-sm font-medium text-gray-700">
-                  👤 Full Name
-                </label>
-                <input
-                  type="text"
-                  id="fullName"
-                  name="fullName"
-                  onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-primary focus:border-primary"
-                  placeholder="Your name"
-                />
-              </div>
-              <div>
-                <label htmlFor="companyNameContact" className="block text-sm font-medium text-gray-700">
-                  🏢 Company Name
-                </label>
-                <input
-                  type="text"
-                  id="companyNameContact"
-                  name="companyNameContact"
-                  onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-primary focus:border-primary"
-                  placeholder="Your company name"
-                />
-              </div>
-              <div>
-                <label htmlFor="emailContact" className="block text-sm font-medium text-gray-700">
-                  📧 Email Address
-                </label>
-                <input
-                  type="email"
-                  id="emailContact"
-                  name="emailContact"
-                  onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-primary focus:border-primary"
-                  placeholder="you@example.com"
-                />
-              </div>
-              <div>
-                <label htmlFor="phoneContact" className="block text-sm font-medium text-gray-700">
-                  📱 Phone Number
-                </label>
-                <input
-                  type="tel"
-                  id="phoneContact"
-                  name="phoneContact"
-                  onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-primary focus:border-primary"
-                  placeholder="(123) 456-7890"
-                />
-              </div>
-            </div>
-          </section>
-
-          <div className="text-center">
-            <button
-              type="submit"
-              className="inline-flex justify-center py-3 px-6 border border-transparent shadow-sm text-base font-medium rounded-md text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-16">
+            {/* Section 1: Business & Branding Information */}
+            <motion.section
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              variants={sectionVariants}
             >
-              Submit & Schedule Call
-            </button>
-          </div>
-        </form>
+              <motion.h2
+                className="text-2xl font-bold text-foreground mb-8 flex items-center gap-2"
+                variants={sectionVariants}
+              >
+                🗂️ Business & Branding Information
+              </motion.h2>
+              <motion.div className="grid grid-cols-1 md:grid-cols-2 gap-6" variants={sectionVariants}>
+                <FormField
+                  control={form.control}
+                  name="businessName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>🏢 Business Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Your business name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="brandColors"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>🎨 Brand Colors</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g., Blue, White, Gold" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="brandVoice"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>📝 Brand Voice</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g., Professional, Friendly, Modern" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="preferredFonts"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>🔤 Preferred Fonts</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g., Arial, Helvetica, Custom fonts" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="companyTagline"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>💫 Company Tagline</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Your company tagline or slogan" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="targetAudience"
+                  render={({ field }) => (
+                    <FormItem className="md:col-span-2">
+                      <FormLabel>🎯 Target Audience</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Describe your target audience, demographics, and customer personas"
+                          className="min-h-[100px]"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="logoAssets"
+                  render={({ field }) => (
+                    <FormItem className="md:col-span-2">
+                      <FormLabel>🖼️ Logo & Brand Assets</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Describe your existing logo, brand assets, or if you need new ones created"
+                          className="min-h-[100px]"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </motion.div>
+            </motion.section>
+
+            {/* Section 2: Website Goals & Features */}
+            <motion.section
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              variants={sectionVariants}
+            >
+              <motion.h2
+                className="text-2xl font-bold text-foreground mb-8 flex items-center gap-2"
+                variants={sectionVariants}
+              >
+                🧱 Website Goals & Features
+              </motion.h2>
+              <motion.div className="grid grid-cols-1 md:grid-cols-2 gap-6" variants={sectionVariants}>
+                <FormField
+                  control={form.control}
+                  name="websitePages"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>📄 Website Pages</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g., Home, About, Services, Contact" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="mustHaveFeatures"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>⚙️ Must-have Features</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g., Contact forms, Booking system, Blog" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="ecommerceNeeds"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>🛒 eCommerce Needs</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Do you need eCommerce functionality?" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="Yes">Yes</SelectItem>
+                          <SelectItem value="No">No</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                {watchEcommerceNeeds === "Yes" && (
+                  <FormField
+                    control={form.control}
+                    name="productCount"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>How many products?</FormLabel>
+                        <FormControl>
+                          <Input placeholder="e.g., 10-50 products" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
+                <FormField
+                  control={form.control}
+                  name="websiteGoals"
+                  render={({ field }) => (
+                    <FormItem className="md:col-span-2">
+                      <FormLabel>🎯 Website Goals</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="What do you want to achieve with your website? (e.g., generate leads, sell products, build brand awareness)"
+                          className="min-h-[100px]"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="inspiration"
+                  render={({ field }) => (
+                    <FormItem className="md:col-span-2">
+                      <FormLabel>💡 Inspiration</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Share any websites you like or want to use as inspiration (include URLs if possible)"
+                          className="min-h-[100px]"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </motion.div>
+            </motion.section>
+
+            {/* Section 3: Content & Assets */}
+            <motion.section
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              variants={sectionVariants}
+            >
+              <motion.h2
+                className="text-2xl font-bold text-foreground mb-8 flex items-center gap-2"
+                variants={sectionVariants}
+              >
+                📝 Content & Assets
+              </motion.h2>
+              <motion.div className="grid grid-cols-1 md:grid-cols-2 gap-6" variants={sectionVariants}>
+                <FormField
+                  control={form.control}
+                  name="websiteContent"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>📄 Website Content</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Do you have content ready?" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="Yes">Yes, content is ready</SelectItem>
+                          <SelectItem value="No">No, need help creating content</SelectItem>
+                          <SelectItem value="Partially">Partially ready</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="copywriting"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>✍️ Copywriting</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Do you need copywriting services?" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="Yes">Yes, need copywriting help</SelectItem>
+                          <SelectItem value="No">No, I'll provide the copy</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="contentAccess"
+                  render={({ field }) => (
+                    <FormItem className="md:col-span-2">
+                      <FormLabel>🔗 Content Access</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="How will you provide content? (Google Drive, email, existing website, etc.)"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="imagesMedia"
+                  render={({ field }) => (
+                    <FormItem className="md:col-span-2">
+                      <FormLabel>📸 Images & Media</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Describe your image and media needs. Do you have professional photos? Need stock images? Video content?"
+                          className="min-h-[100px]"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </motion.div>
+            </motion.section>
+
+            {/* Section 4: Domain & Technical Information */}
+            <motion.section
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              variants={sectionVariants}
+            >
+              <motion.h2
+                className="text-2xl font-bold text-foreground mb-8 flex items-center gap-2"
+                variants={sectionVariants}
+              >
+                🌐 Domain & Technical Information
+              </motion.h2>
+              <motion.div className="grid grid-cols-1 md:grid-cols-2 gap-6" variants={sectionVariants}>
+                <FormField
+                  control={form.control}
+                  name="domainName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>🔗 Domain Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="yourwebsite.com or preferred domain" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="domainAccess"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>🔐 Domain Access</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Do you have domain access?" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="Yes">Yes, I have access</SelectItem>
+                          <SelectItem value="No">No, need help with domain</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="contactEmail"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>📧 Contact Email</FormLabel>
+                      <FormControl>
+                        <Input type="email" placeholder="your@email.com" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="analyticsTracking"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>📊 Analytics & Tracking</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select analytics preference" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="Google Analytics">Google Analytics</SelectItem>
+                          <SelectItem value="Facebook Pixel">Facebook Pixel</SelectItem>
+                          <SelectItem value="None">None</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </motion.div>
+            </motion.section>
+
+            {/* Section 5: Project Scope & Timeline */}
+            <motion.section
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              variants={sectionVariants}
+            >
+              <motion.h2
+                className="text-2xl font-bold text-foreground mb-8 flex items-center gap-2"
+                variants={sectionVariants}
+              >
+                ✅ Project Scope & Timeline
+              </motion.h2>
+              <motion.div className="grid grid-cols-1 md:grid-cols-2 gap-6" variants={sectionVariants}>
+                <FormField
+                  control={form.control}
+                  name="timeline"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>⏱️ Timeline</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g., 2-4 weeks, ASAP, flexible" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="budget"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>💰 Budget</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g., $2,000-$5,000" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="additionalInfo"
+                  render={({ field }) => (
+                    <FormItem className="md:col-span-2">
+                      <FormLabel>📝 Additional Information</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Any additional information, special requirements, or questions you'd like to share"
+                          className="min-h-[120px]"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </motion.div>
+            </motion.section>
+
+            {/* Section 6: Contact Information */}
+            <motion.section
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.5 }}
+              variants={sectionVariants}
+            >
+              <motion.h2
+                className="text-2xl font-bold text-foreground mb-8 flex items-center gap-2"
+                variants={sectionVariants}
+              >
+                📞 Contact Information
+              </motion.h2>
+              <motion.div className="grid grid-cols-1 md:grid-cols-2 gap-6" variants={sectionVariants}>
+                <FormField
+                  control={form.control}
+                  name="fullName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>👤 Full Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Your full name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="companyName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>🏢 Company Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Your company name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="emailAddress"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>📧 Email Address</FormLabel>
+                      <FormControl>
+                        <Input type="email" placeholder="your@email.com" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="phoneNumber"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>📱 Phone Number</FormLabel>
+                      <FormControl>
+                        <Input type="tel" placeholder="+1 (555) 000-0000" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </motion.div>
+            </motion.section>
+
+            {/* Submit Button */}
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.6 }}
+              variants={sectionVariants}
+              className="text-center pt-8"
+            >
+              <Button type="submit" size="lg" className="px-12 py-4 text-lg" disabled={isSubmitting}>
+                {isSubmitting ? "Submitting..." : "Schedule Your Kick-off Call"}
+              </Button>
+              <p className="text-sm text-muted-foreground mt-4">
+                After submitting, you'll be redirected to schedule your project kick-off call.
+              </p>
+            </motion.div>
+          </form>
+        </Form>
       </div>
-    </main>
-  );
+    </div>
+  )
 }
