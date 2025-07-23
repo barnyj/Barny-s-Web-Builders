@@ -45,7 +45,7 @@ export default function NewsletterSubscribe() {
         >
           <h2 className="text-2xl font-bold text-foreground mb-4 text-center">Stay Inspired</h2>
           <p className="text-muted-foreground mb-6 text-center">
-            Subscribe to our newsletter for the latest updates on minimal design and floral artistry.
+            Subscribe to our newsletter for our Latest web design advice and promotions.
           </p>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">

@@ -114,14 +114,19 @@ export default function OnboardingPage() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true)
     try {
-      // Here you could send the form data to your API if needed
-      console.log("Form submitted:", values)
+      
+      // 1) send to Notion
+      await fetch("/api/onboarding", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values),
+      });
 
       // Redirect to Calendly
       router.push("https://calendly.com/barnyswebbuilders/project-kick-off-call")
-    } catch (error) {
-      console.error("Form submission error:", error)
-      alert("Something went wrong. Please try again.")
+    } catch (err) {
+      console.error(err)
+      alert("Submission failed, please try again.")
     } finally {
       setIsSubmitting(false)
     }
