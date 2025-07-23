@@ -53,7 +53,7 @@ export default function Header() {
         <div className="flex flex-1 justify-end items-center gap-x-4">
           {/* “Book Now” button: same text-size as other links */}
           <a
-            href="https://calendly.com/barnyswebbuilders/project-kick-off-call"
+            href="../onboarding"
             target="_blank"
             rel="noopener noreferrer"
             className="text-sm font-semibold leading-6 text-foreground hover:text-primary transition-colors"
