@@ -42,16 +42,7 @@ export async function POST(req: Request) {
     requestBody: { requests }
   })
 
-  // 3) (Optional) Move the doc into a specific Drive folder
-  if (process.env.GOOGLE_DRIVE_FOLDER_ID) {
-    await drive.files.update({
-      fileId: documentId,
-      addParents: process.env.GOOGLE_DRIVE_FOLDER_ID,
-      removeParents: 'root'
-    })
-  }
-
-  // 4) Return the Doc’s URL so you can link to it if you like
+   // 3) Return the URL
   const docUrl = `https://docs.google.com/document/d/${documentId}/edit`
   return NextResponse.json({ docUrl })
 }
