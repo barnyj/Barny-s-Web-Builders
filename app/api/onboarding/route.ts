@@ -17,24 +17,25 @@ const drive = google.drive({ version: 'v3', auth })
 export async function POST(req: Request) {
   const data = await req.json()
 
-  // 1) Create a new Doc titled with the business name
-  const createRes = await docs.documents.create({
-    requestBody: { title: `Onboarding – ${data.businessName}` }
+  // 1) Create the Google Doc *inside* your folder
+  const driveRes = await drive.files.create({
+    requestBody: {
+      name: `Onboarding – ${data.businessName}`,
+      mimeType: 'application/vnd.google-apps.document',
+      parents: [process.env.GOOGLE_DRIVE_FOLDER_ID]
+    }
   })
-  const documentId = createRes.data.documentId!
-
-  // 2) Build a batchUpdate request to insert all form fields
-  const requests: Array<any> = []
+  const documentId = driveRes.data.id!
+  
+  // 2) Batch‑update to populate form fields
+  const requests: any[] = []
   let cursor = 1
   for (const [key, value] of Object.entries(data)) {
     const label = key
-      // split camelCase into words
       .replace(/([A-Z])/g, ' $1')
       .replace(/^./, str => str.toUpperCase())
     const text = `${label}: ${value}\n`
-    requests.push({
-      insertText: { location: { index: cursor }, text }
-    })
+    requests.push({ insertText: { location: { index: cursor }, text } })
     cursor += text.length
   }
   await docs.documents.batchUpdate({
@@ -42,7 +43,7 @@ export async function POST(req: Request) {
     requestBody: { requests }
   })
 
-   // 3) Return the URL
+  // 3) Return the URL
   const docUrl = `https://docs.google.com/document/d/${documentId}/edit`
   return NextResponse.json({ docUrl })
 }
